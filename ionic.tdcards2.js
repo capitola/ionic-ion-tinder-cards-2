@@ -451,6 +451,11 @@
   }])
 
   .directive('tdCards', ['$rootScope', '$timeout', function($rootScope, $timeout) {
+
+    function topDistance(card){
+      return (card.clientWidth / 12);
+    }
+
     return {
       restrict: 'E',
       template: '<div class="td-cards" ng-transclude></div>',
@@ -478,7 +483,7 @@
 
               (function(j) {
                 $timeout(function() {
-                  var top = (j * 25);
+                  var top = (j * topDistance(card));
                   var scale = Math.max(0, (1 - (j / 10)));
                   var animation = collide.animation({
                     duration: 800,
@@ -512,7 +517,7 @@
         var bringCardUp = function(card, amt, max, i) {
           var position, newTop;
           position = card.style.transform || card.style.webkitTransform;
-          newTop = Math.max(max - 25, Math.min(max, max - (max * Math.abs(amt))));
+          newTop = Math.max(max - topDistance(card), Math.min(max, max - (max * Math.abs(amt))));
           newScale = (1 - (Math.max(i - 1, Math.min(i, i - (i * Math.abs(amt)))) / 10));
           card.style.transform = card.style.webkitTransform = 'translate3d(0, ' + newTop + 'px, 0) scale('+ newScale+')';
         };
@@ -522,7 +527,7 @@
 
           var max = Math.min(cards.length, 10);
           for(var i = 1; i < cards.length; i++){
-            bringCardUp(cards[i], amt, 25 * i, i);
+            bringCardUp(cards[i], amt, topDistance(card) * i, i);
           }
         };
 
